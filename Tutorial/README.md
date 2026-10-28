@@ -266,6 +266,3 @@ The actual scrambled passwords live in `/etc/shadow`, which only the `root` supe
 - [MITRE ATT&CK: T1087 Account Discovery](https://attack.mitre.org/techniques/T1087/) — the parent technique
 - [MITRE ATT&CK: T1087.001 Local Account](https://attack.mitre.org/techniques/T1087/001/) — commands, real-world examples, mitigations, detection
 - [MITRE ATT&CK: Discovery tactic (TA0007)](https://attack.mitre.org/tactics/TA0007/) — where this step fits in the bigger picture of an attack
-- [Linux user account management (Red Hat)](https://www.redhat.com/sysadmin/linux-user-account-management) — the `/etc/passwd` format explained in plain terms
-- [Microsoft `net user` documentation](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/net-user) — the Windows equivalent
-- [Docker: Get started](https://docs.docker.com/get-started/) — if you want to understand the lab tooling better
