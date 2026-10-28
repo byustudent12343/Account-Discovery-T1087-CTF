@@ -7,12 +7,11 @@
 3. [Tutorial](#tutorial)
    - [Step 1: Figure out who you are first](#step-1-figure-out-who-you-are-first)
    - [Step 2: Read the master list of accounts](#step-2-read-the-master-list-of-accounts)
-   - [Step 3: Cut through the noise](#step-3-cut-through-the-noise)
+   - [Step 3: Ignore useless information](#step-3-ignore-useless-information)
    - [Step 4: Don't miss the hidden service account](#step-4-dont-miss-the-hidden-service-account)
    - [Step 5: Find out who the admins are](#step-5-find-out-who-the-admins-are)
    - [Step 6: A few more quick looks](#step-6-a-few-more-quick-looks)
    - [Step 7: What you can't see](#step-7-what-you-cant-see)
-   - [Bonus: The same technique on Windows and macOS](#bonus-the-same-technique-on-windows-and-macos)
 4. [Resources](#resources)
 
 ---
