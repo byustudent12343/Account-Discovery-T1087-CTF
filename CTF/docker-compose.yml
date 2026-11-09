@@ -5,6 +5,7 @@
 services:
   acme-web01:
     build: .
+    pull_policy: build            # always build from the Dockerfile; never try Docker Hub
     image: t1087-tutorial
     container_name: t1087-tutorial
     hostname: acme-web01          # gives the prompt: student@acme-web01:~$
