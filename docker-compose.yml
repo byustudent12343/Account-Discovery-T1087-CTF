@@ -1,0 +1,19 @@
+# Start the lab:      docker compose up -d --build
+# Log in:             docker exec -it t1087-tutorial bash
+# Tear it all down:   docker compose down --rmi local
+
+services:
+  acme-web01:
+    build: .
+    image: t1087-tutorial
+    container_name: t1087-tutorial
+    hostname: acme-web01          # gives the prompt: student@acme-web01:~$
+    init: true                    # lets the container stop instantly on "down"
+
+    # --- Safety settings: this lab never needs any of these ---
+    network_mode: none            # no network access in or out
+    cap_drop:
+      - ALL                       # no special kernel privileges
+    security_opt:
+      - no-new-privileges:true    # nothing inside can gain privileges
+    restart: "no"
