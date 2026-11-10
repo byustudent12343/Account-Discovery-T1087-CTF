@@ -53,12 +53,12 @@ Since you're in this class, I'll assume you've already got docker installed and 
 
 ### Step A: Download the tutorial files
 
-**Option 1 (easiest):** On this repository's GitHub page, click the green **Code** button → **Download ZIP**. Unzip it, then open the folder `code/Account-Discovery-T1087-CTF/Tutorial`.
+**Option 1 (easiest):** On this repository's GitHub page, click the green **Code** button → **Download ZIP**. Unzip it, then open the `Account-Discovery-T1087-CTF-main` folder and go into the `Tutorial` folder.
 
 **Option 2 (if you have Git):**
 
 ```bash
-git clone <REPO-URL>
+git clone https://github.com/byustudent12343/Account-Discovery-T1087-CTF.git
 ```
 
 ### Step B: Move your terminal into the Tutorial folder
@@ -68,7 +68,7 @@ Your terminal is always "standing" inside one folder. Use `cd` (change directory
 It will look something like this (your path will differ):
 
 ```bash
-cd C:\Users\yourname\Downloads\repo-main\code\account-discovery-T1087\Tutorial
+cd C:\Users\yourname\Downloads\Account-Discovery-T1087-CTF-main\Tutorial
 ```
 Alternatively, if you are running Windows, you can navigate to the /Tutorial folder and click on the searchbar at the top. Then, when it highlights the filepath, delete everything and type in "cmd". This will open up a terminal window already inside the folder.
 
@@ -258,6 +258,20 @@ cat: /etc/shadow: Permission denied
 The actual scrambled passwords live in `/etc/shadow`, which only the `root` superuser can read.
 
 **What's going on:** Discovery gives the attacker a *target list*, not the keys. Actually stealing carol's password is a separate, later step (a different ATT&CK tactic called **Credential Access**). This is the key takeaway: account discovery is reconnaissance, not the break-in itself.
+
+---
+
+## Clean up
+
+When you're finished, leave the lab by typing `exit`, then remove it from your computer:
+
+```bash
+docker compose down --rmi local
+```
+
+## Ready for the challenge?
+
+Head to the [`CTF`](../CTF) folder. It's a different Acme server, set up less neatly than this one, and the commands above are a starting point, not the answer. Find the flag in the format `CYBER266{...}`.
 
 ---
 
