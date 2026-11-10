@@ -1,71 +1,81 @@
 # =============================================================================
-#  Acme Corp "acme-web01" - practice lab for MITRE ATT&CK T1087.001
+#  Acme Corp "acme-db02" - CTF for MITRE ATT&CK T1087.001
 #  (Account Discovery: Local Account)
 #
-#  This image is a deliberately simple, harmless training target. It contains
-#  only fake user accounts for students to enumerate. No real services run,
-#  and no exploits are included.
+#  Flag format: CYBER266{A_B_C}
+#  Every account's comment field holds a "tag=" word. Most are decoys.
+#  Students must use account discovery to work out which three accounts
+#  (A, B, C) matter, then join their tags. See README.md for the challenge.
+#
+#  Harmless training target: fake accounts only, no services, no exploits.
 # =============================================================================
 FROM ubuntu:24.04
 
-LABEL description="T1087.001 Local Account Discovery practice lab (Acme Corp acme-web01)"
+LABEL description="T1087.001 Local Account Discovery CTF (Acme Corp acme-db02)"
 
-# -----------------------------------------------------------------------------
-# 1. Clean slate
-#    The ubuntu:24.04 image ships with a default "ubuntu" user at UID 1000.
-#    Remove it so the lab accounts get exactly the IDs shown in the tutorial.
-# -----------------------------------------------------------------------------
+# Remove the base image's default "ubuntu" user (UID 1000).
 RUN userdel -r ubuntu 2>/dev/null || true
 
 # -----------------------------------------------------------------------------
-# 2. Create the Acme Corp accounts
-#    Order matters: useradd appends to /etc/passwd, so this is the order
-#    students will see them in.
-#
-#    user        UID   GID   notes
-#    alice       1000  1002  Developer
-#    bob         1001  1003  Accountant
-#    carol       1002  1004  IT Administrator, member of the sudo group  <- target
-#    svc_backup   999   999  service account, UID just under 1000,
-#                            but has an interactive shell                 <- hidden target
-#    student     1003  1005  the foothold the "attacker" starts from
+# Service accounts (UID < 1000). All but one are locked down with nologin
+# or /bin/false. The root-equivalent account is slipped in among them so it
+# blends into the noise in /etc/passwd.
 # -----------------------------------------------------------------------------
-RUN groupadd -g 999  svc_backup \
- && groupadd -g 1002 alice \
- && groupadd -g 1003 bob \
- && groupadd -g 1004 carol \
- && groupadd -g 1005 student \
- \
- && useradd -m -u 1000 -g alice -s /bin/bash \
-        -c "Alice Nguyen,,,Developer" alice \
- && useradd -m -u 1001 -g bob -s /bin/bash \
-        -c "Bob Martinez,,,Accountant" bob \
- && useradd -m -u 1002 -g carol -G sudo -s /bin/bash \
-        -c "Carol Smith,,,IT Administrator" carol \
- && useradd -M -u 999 -g svc_backup -d /var/lib/backup -s /bin/bash \
-        -c "Nightly backup job" svc_backup \
- && useradd -m -u 1003 -g student -s /bin/bash \
-        -c "Student (you!)" student \
- \
- && mkdir -p /var/lib/backup \
- && chown svc_backup:svc_backup /var/lib/backup \
- && chmod 750 /var/lib/backup /home/alice /home/bob /home/carol /home/student
+RUN useradd -r -U -u 990 -M -d /var/www       -s /usr/sbin/nologin \
+        -c "Web app runner,,,,tag=w3b"                 svc_web \
+ && useradd -r -U -u 991 -M -d /var/lib/mon    -s /usr/sbin/nologin \
+        -c "Monitoring agent,,,,tag=m0n1t0r"           svc_mon \
+ && useradd -r -U -u 992 -M -d /var/lib/ftp    -s /bin/false \
+        -c "Old FTP sync - disabled,,,,tag=0ld"        svc_legacy \
+ && useradd -o -u 0 -g 0 -M -d /var/lib/sysupdate -s /bin/bash \
+        -c "System update helper,,,,tag=us3rs"         sysupdate \
+ && useradd -r -U -u 993 -M -d /var/lib/deploy -s /usr/sbin/nologin \
+        -c "Deploy hook,,,,tag=d3pl0y"                 svc_deploy \
+ && useradd -r -U -u 994 -M -d /var/spool/mail -s /usr/sbin/nologin \
+        -c "Mail relay,,,,tag=m41l"                    svc_mail \
+ && mkdir -p /var/lib/mon /var/lib/ftp /var/lib/sysupdate /var/lib/deploy \
+ && chmod 700 /var/lib/sysupdate
 
 # -----------------------------------------------------------------------------
-# 3. Give every account a real (but random, never-shown) password
-#    This makes /etc/shadow look like a real server's, and it means nobody,
-#    including the student, can "su" into another account. Discovery gives
-#    you a target list, not the keys. root stays locked, as in the base image.
+# Employees (UID >= 1000), plus one service account hiding among them.
+#
+# Twists that stop the tutorial's exact commands from solving the CTF:
+#  - eli's PRIMARY group is sudo (-g sudo). /etc/group only lists
+#    supplementary members, so "getent group sudo" shows nobody at all.
+#  - svc_ci is a service account that was created like a normal user, so it
+#    got a UID above 1000. A "UID < 1000" filter misses it.
+#  - dkim's "IT Administrator" title is a lie, and the sudo-requests group
+#    catches anyone who just runs "grep sudo".
 # -----------------------------------------------------------------------------
-RUN for u in alice bob carol svc_backup student; do \
+RUN groupadd developers \
+ && groupadd sudo-requests \
+ && useradd -m -U -s /bin/bash -G adm,sudo-requests \
+        -c "Dana Kim,,,IT Administrator,tag=r00t"      dkim \
+ && useradd -m -g sudo -s /bin/bash \
+        -c "Eli Brooks,,,Summer Intern,tag=kn0w"       eli \
+ && useradd -m -U -s /bin/bash \
+        -c "Farah Patel,,,Accountant,tag=s3cur3"       fpatel \
+ && useradd -m -U -s /bin/bash -G developers \
+        -c "Grace Wu,,,Developer,tag=p4ssw0rd"         gwu \
+ && useradd -U -M -d /opt/ci-runner -s /bin/bash \
+        -c "CI pipeline runner,,,,tag=y0ur"            svc_ci \
+ && mkdir -p /opt/ci-runner && chown svc_ci:svc_ci /opt/ci-runner \
+ && useradd -m -U -s /bin/bash \
+        -c "Hank Jones,,,Sales,tag=h4ck3r"             hjones \
+ && useradd -m -U -s /bin/bash \
+        -c "Student (you!),,,,tag=st4rt"               student \
+ && chmod 750 /home/*
+
+# Random, never-shown passwords for everyone, so nobody can su into the
+# accounts they discover. root stays locked.
+RUN for u in svc_ci sysupdate dkim eli fpatel gwu hjones student; do \
         echo "$u:$(head -c 24 /dev/urandom | base64)"; \
     done | chpasswd
 
-# -----------------------------------------------------------------------------
-# 4. Drop the student into the lab as the low-privilege "student" user
-# -----------------------------------------------------------------------------
+# Flag checker. It stores only a SHA-256 hash, not the flag.
+COPY checkflag /usr/local/bin/checkflag
+RUN chmod 755 /usr/local/bin/checkflag
+
 USER student
 WORKDIR /home/student
-
-# Keep the container running so students can "docker exec" into it.
 CMD ["sleep", "infinity"]

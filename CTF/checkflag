@@ -1,0 +1,16 @@
+#!/bin/sh
+# Usage: checkflag 'CYBER266{...}'
+# Only a hash of the flag is stored here, so reading this file won't give it away.
+FLAG_SHA256="f1372f311fbaf54c4b18aa987ff31047c43483f4f4691c0ca1ee9c4997818776"
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: checkflag 'CYBER266{...}'   (keep the single quotes)"
+    exit 2
+fi
+
+if [ "$(printf '%s' "$1" | sha256sum | cut -d' ' -f1)" = "$FLAG_SHA256" ]; then
+    echo "Correct! You found all three accounts. Submit that flag."
+else
+    echo "Not quite. Check the order (A_B_C) and that each tag is from the right account."
+    exit 1
+fi

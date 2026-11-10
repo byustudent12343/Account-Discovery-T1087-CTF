@@ -1,20 +1,20 @@
-# Start the lab:      docker compose up -d --build
-# Log in:             docker exec -it t1087-tutorial bash
+# Start the CTF:      docker compose up -d --build
+# Log in:             docker exec -it t1087-ctf bash
 # Tear it all down:   docker compose down --rmi local
 
 services:
-  acme-web01:
+  acme-db02:
     build: .
     pull_policy: build            # always build from the Dockerfile; never try Docker Hub
-    image: t1087-tutorial
-    container_name: t1087-tutorial
-    hostname: acme-web01          # gives the prompt: student@acme-web01:~$
-    init: true                    # lets the container stop instantly on "down"
+    image: t1087-ctf
+    container_name: t1087-ctf
+    hostname: acme-db02           # gives the prompt: student@acme-db02:~$
+    init: true
 
     # --- Safety settings: this lab never needs any of these ---
-    network_mode: none            # no network access in or out
+    network_mode: none
     cap_drop:
-      - ALL                       # no special kernel privileges
+      - ALL
     security_opt:
-      - no-new-privileges:true    # nothing inside can gain privileges
+      - no-new-privileges:true
     restart: "no"
